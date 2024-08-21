@@ -8,6 +8,8 @@ from asteroid import Asteroid
 
 from asteroidfield import AsteroidField
 
+from shot import Shot
+
 import sys
 
 
@@ -25,7 +27,7 @@ def main():
     Player.containers = (updatables, drawables)
     Asteroid.containers = (updatables, drawables, asteroids)
     AsteroidField.containers = (updatables)
-    Shot.containers = (shots)
+    Shot.containers = (shots, updatables, drawables)
     
     dt = 0
 
@@ -44,11 +46,17 @@ def main():
         
         for updatable in updatables:
             updatable.update(dt)
+
+        player.timer -= dt
         
         for asteroid in asteroids:
             if player.collision_detection(asteroid):
                 print("Game over!")
                 sys.exit()
+            for shot in shots:
+                if shot.collision_detection(asteroid):
+                    shot.kill()
+                    asteroid.split()
 
         screen.fill("black")
        
